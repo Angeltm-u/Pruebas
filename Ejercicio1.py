@@ -10,34 +10,33 @@ def preparar_expresion(expr: str) -> str:
     expr = expr.replace("**x", "*x")      # corregir si se duplicó
     return expr
 
-# Pedimos las dos funciones
-func1 = input("Ingrese la primera función (ejemplo: 2x+1): ")
-func2 = input("Ingrese la segunda función (ejemplo: -x+3): ")
+# Restricciones:
+# 1) x = 5  (vertical)
+# 2) x + y = 15  ->  y = -x + 15
+func2 = preparar_expresion("-x+15")
 
-func1 = preparar_expresion(func1)
-func2 = preparar_expresion(func2)
+# Rango de la gráfica
+xmin, xmax = -5, 20
+ymin, ymax = -5, 20
 
-# Definimos el rango del gráfico (valores de X y Y)
-xmin, xmax = -20, 20
-ymin, ymax = -20, 20
-
-# Recorremos los valores de Y de arriba hacia abajo
+# Recorremos el plano
 for y in range(ymax, ymin - 1, -1):
     linea = ""
-
     for x in range(xmin, xmax + 1):
-        try:
-            y1 = eval(func1)
-        except:
-            y1 = None
+        # Recta 1: x = 5
+        cond1 = (x == 5)
+
+        # Recta 2: y = -x + 15
         try:
             y2 = eval(func2)
         except:
             y2 = None
-
-        cond1 = (y1 is not None and abs(y - y1) < 0.5)
         cond2 = (y2 is not None and abs(y - y2) < 0.5)
 
+        # Región factible: x>=5, y>=0, x+y<=15
+        region = (x >= 5 and y >= 0 and x + y <= 15)
+
+        # Qué dibujar
         if cond1 and cond2:
             linea += "#"
         elif cond1:
@@ -50,16 +49,18 @@ for y in range(ymax, ymin - 1, -1):
             linea += "|"
         elif y == 0:
             linea += "-"
+        elif region:
+            linea += "."
         else:
             linea += " "
     print(linea)
 
 # Leyenda
 print("\nLeyenda del gráfico:")
-print("  * = Función 1")
-print("  o = Función 2")
+print("  * = x = 5")
+print("  o = x + y = 15")
 print("  # = Intersección")
+print("  . = Región factible")
 print("  | = Eje Y")
 print("  - = Eje X")
 print("  + = Origen (0,0)")
-
